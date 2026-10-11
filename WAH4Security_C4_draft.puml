@@ -1,0 +1,37 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+ 
+' Optional layout adjustments for a cleaner graph
+LAYOUT_WITH_LEGEND()
+ 
+title System Context Diagram for WAHrden Governance Platform
+ 
+'========================
+' Primary Actors (Persons)
+'========================
+Person(sa, "WAH Super Administrator", "Manages platform-wide users, roles, permissions, and oversees governance intelligence.")
+Person(fa, "Facility Administrator", "Manages localized healthcare facilities, delegated administrators, and facility modules.")
+Person(hp, "Healthcare Personnel", "A user who needs to access protected WAH services for daily healthcare operations.")
+ 
+'========================
+' The Core System
+'========================
+System(wahrden, "WAHrden Governance Platform", "A Centralized Identity, Access, and Governance Platform that enforces policies, manages sessions, and records immutable audit evidence.")
+ 
+'========================
+' External Systems
+'========================
+System_Ext(wah_services, "Protected WAH Services", "Healthcare applications within the WAH ecosystem that rely on WAHrden for access control and authorization.")
+System_Ext(notification_svc, "Notification Service", "External service used by the platform to send security alerts and system notifications.")
+ 
+'========================
+' Relationships / Interactions
+'========================
+Rel(sa, wahrden, "Manages users/roles, sets governance policies, and views compliance reports", "HTTPS")
+Rel(fa, wahrden, "Manages facility tenants, local admins, and views operational visibility", "HTTPS")
+Rel(hp, wahrden, "Authenticates to establish a trusted digital identity", "HTTPS")
+ 
+Rel(wahrden, wah_services, "Provides trusted identity context, session governance, and authorizes service access", "API / Tokens")
+Rel(wahrden, notification_svc, "Triggers security alerts and compliance notifications", "API Calls")
+ 
+@enduml

@@ -1,0 +1,30 @@
+{
+  "name": "wahrden-iam-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WAHrden Identity & Access Governance — cloud-hosted prototype (Next.js, Vercel-ready). Implements Modules 1-5 / UC-IAL, UC-ASS, UC-AGA, UC-FMG, UC-OSO.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "mysql2": "^3.24.5",
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.3"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

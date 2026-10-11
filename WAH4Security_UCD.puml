@@ -1,0 +1,72 @@
+#use case diagram
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ranksep 60
+skinparam nodesep 30
+
+skinparam usecase {
+    BackgroundColor #E8F4F8
+    BorderColor #2980B9
+    ArrowColor #2C3E50
+}
+
+skinparam actor {
+    BorderColor #2C3E50
+    BackgroundColor #FAFAFA
+}
+
+' Human / Primary Actors on the left
+actor "WAH Management" as WM
+actor "Facility Administrator" as FA
+actor "WAH User / Employee" as User
+
+' System Boundary
+rectangle "WAHrden Platform" {
+    
+    ' User Authentication & Runtime
+    usecase "Authenticate User" as UC01
+    usecase "Authorize Service Access" as UC06
+    usecase "Govern Active Sessions" as UC07
+    
+    ' Administrative Governance
+    usecase "Manage User Accounts" as UC02
+    usecase "Manage Facilities & Modules" as UC03
+    usecase "Manage Roles & Permissions" as UC04
+    usecase "Manage User Access Assignments" as UC05
+    
+    ' Monitoring & Auditing
+    usecase "Govern Audit Events" as UC08
+    usecase "Provide Operational Visibility" as UC09
+}
+
+' External Systems on the right
+actor "Participating WAH Services\n(WAH4P, WAH4C, WAH4H)" as Services
+
+' ================================
+' Direct Actor Associations
+' ================================
+User --> UC01
+
+WM --> UC02
+WM --> UC03
+WM --> UC04
+WM --> UC05
+WM --> UC09
+
+FA --> UC05
+FA --> UC09
+
+Services --> UC06
+
+' ================================
+' Standard Use Case Relationships
+' ================================
+UC01 .> UC07 : <<include>>
+UC06 .> UC07 : <<include>>
+UC06 .> UC05 : <<include>>
+
+UC09 .> UC08 : <<include>>
+
+@enduml
