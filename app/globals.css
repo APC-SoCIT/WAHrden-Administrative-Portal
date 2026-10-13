@@ -283,8 +283,6 @@ pre.eval {
 }
 
 /* ---------- Alerts / notifications ---------- */
-.link { color: var(--accent); text-decoration: none; font-size: 13px; }
-.link:hover { text-decoration: underline; }
 .bell-wrap { position: relative; }
 button.bell { position: relative; }
 button.bell .badge {

@@ -107,9 +107,6 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           <header className="appbar">
             <span className="appbar-title">WAHrden Administration Portal</span>
             <div className="row" style={{ gap: 12 }}>
-              <a className="link" href="https://wah4c.vercel.app" target="_blank" rel="noreferrer">
-                Launch WAH4C ↗
-              </a>
               {canSeeAlerts && (
                 <div className="bell-wrap">
                   <button

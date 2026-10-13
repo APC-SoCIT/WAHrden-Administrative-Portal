@@ -72,12 +72,6 @@ export default function LoginPage() {
                 <strong style={{ color: "var(--deny)" }}>{err}</strong>
               </div>
             )}
-            <p className="muted" style={{ marginTop: 12 }}>
-              After signing in you can launch the WAH4C service application:{" "}
-              <a className="link" href="https://wah4c.vercel.app" target="_blank" rel="noreferrer">
-                Launch WAH4C ↗
-              </a>
-            </p>
           </div>
           <div className="card">
             <span className="pill">Prototype · presentation</span>
