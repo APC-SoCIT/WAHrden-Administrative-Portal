@@ -115,37 +115,39 @@ export default function IdentitiesPage() {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search accounts…" style={{ maxWidth: 220 }} />
             <button className="secondary" onClick={load}>Search</button>
           </div>
-          <table style={{ marginTop: 8 }}>
-            <thead><tr><th>Account</th><th>Type</th><th>Status</th><th>Sessions</th><th>Action</th></tr></thead>
-            <tbody>
-              {users.map((u) => {
-                const ac = activeCount.get(u.id) ?? 0;
-                const active = u.status === "Active";
-                return (
-                  <tr key={u.id}>
-                    <td>{u.displayName}<br /><span className="muted">{u.email}</span></td>
-                    <td><span className="muted">{u.portalRole}</span></td>
-                    <td>
-                      {active
-                        ? <span className="pill ok">Active</span>
-                        : <span className="pill deny">Deactivated</span>}
-                    </td>
-                    <td>
-                      {ac > 0 ? <span className="pill warn">{ac} active</span> : <span className="muted">none</span>}
-                    </td>
-                    <td>
-                      <div className="row">
+          <div className="table-wrap" style={{ marginTop: 8 }}>
+            <table>
+              <thead><tr><th>Account</th><th>Type</th><th>Status</th><th>Sessions</th><th>Action</th></tr></thead>
+              <tbody>
+                {users.map((u) => {
+                  const ac = activeCount.get(u.id) ?? 0;
+                  const active = u.status === "Active";
+                  return (
+                    <tr key={u.id}>
+                      <td>{u.displayName}<br /><span className="muted">{u.email}</span></td>
+                      <td><span className="muted">{u.portalRole}</span></td>
+                      <td>
                         {active
-                          ? <button className="secondary" onClick={() => setStatus(u, "Inactive")}>Deactivate</button>
-                          : <button className="secondary" onClick={() => setStatus(u, "Active")}>Activate</button>}
-                        <button className="secondary" onClick={() => setSelected(u)}>Manage sessions</button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                          ? <span className="pill ok">Active</span>
+                          : <span className="pill deny">Deactivated</span>}
+                      </td>
+                      <td>
+                        {ac > 0 ? <span className="pill warn">{ac} active</span> : <span className="muted">none</span>}
+                      </td>
+                      <td>
+                        <div className="row">
+                          {active
+                            ? <button className="secondary" onClick={() => setStatus(u, "Inactive")}>Deactivate</button>
+                            : <button className="secondary" onClick={() => setStatus(u, "Active")}>Activate</button>}
+                          <button className="secondary" onClick={() => setSelected(u)}>Manage sessions</button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -156,39 +158,43 @@ export default function IdentitiesPage() {
             <button className="secondary" onClick={() => setSelected(null)}>Close</button>
           </div>
           <h4>Active sessions</h4>
-          <table>
-            <thead><tr><th>Session</th><th>Service</th><th>Device</th><th>Location</th><th>Started</th><th>Action</th></tr></thead>
-            <tbody>
-              {selActive.length === 0 && <tr><td colSpan={6} className="muted">No active sessions.</td></tr>}
-              {selActive.map((s) => (
-                <tr key={s.id}>
-                  <td><code>{s.id}</code></td>
-                  <td>{s.service}</td>
-                  <td>{s.device}</td>
-                  <td>{s.location}</td>
-                  <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
-                  <td><button className="danger" onClick={() => terminate(s.id)}>Terminate</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Session</th><th>Service</th><th>Device</th><th>Location</th><th>Started</th><th>Action</th></tr></thead>
+              <tbody>
+                {selActive.length === 0 && <tr><td colSpan={6} className="muted">No active sessions.</td></tr>}
+                {selActive.map((s) => (
+                  <tr key={s.id}>
+                    <td><code>{s.id}</code></td>
+                    <td>{s.service}</td>
+                    <td>{s.device}</td>
+                    <td>{s.location}</td>
+                    <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
+                    <td><button className="danger" onClick={() => terminate(s.id)}>Terminate</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <h4 style={{ marginTop: 12 }}>Historical sessions</h4>
-          <table>
-            <thead><tr><th>Session</th><th>Service</th><th>Device</th><th>Location</th><th>Started</th><th>Ended</th></tr></thead>
-            <tbody>
-              {selHistorical.length === 0 && <tr><td colSpan={6} className="muted">No historical sessions.</td></tr>}
-              {selHistorical.map((s) => (
-                <tr key={s.id}>
-                  <td><code>{s.id}</code></td>
-                  <td>{s.service}</td>
-                  <td>{s.device}</td>
-                  <td>{s.location}</td>
-                  <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
-                  <td><span className="muted">{s.endedAt ? new Date(s.endedAt).toLocaleString() : "—"}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Session</th><th>Service</th><th>Device</th><th>Location</th><th>Started</th><th>Ended</th></tr></thead>
+              <tbody>
+                {selHistorical.length === 0 && <tr><td colSpan={6} className="muted">No historical sessions.</td></tr>}
+                {selHistorical.map((s) => (
+                  <tr key={s.id}>
+                    <td><code>{s.id}</code></td>
+                    <td>{s.service}</td>
+                    <td>{s.device}</td>
+                    <td>{s.location}</td>
+                    <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
+                    <td><span className="muted">{s.endedAt ? new Date(s.endedAt).toLocaleString() : "—"}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </main>

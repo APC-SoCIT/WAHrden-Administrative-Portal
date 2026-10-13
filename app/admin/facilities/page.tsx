@@ -194,39 +194,45 @@ export default function FacilitiesPage() {
         )}
         <div className="card">
           <h3>{isCentral ? "Registered facilities" : "Your facility"}</h3>
-          <table>
-            <thead><tr><th>Facility</th><th>Status</th></tr></thead>
-            <tbody>{visible.map((f) => (
-              <tr key={f.id}><td>{f.name}<br /><span className="muted">{f.code} · {f.type} · {f.region}</span></td><td><span className="pill">{f.status}</span></td></tr>
-            ))}</tbody>
-          </table>
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Facility</th><th>Status</th></tr></thead>
+              <tbody>{visible.map((f) => (
+                <tr key={f.id}><td>{f.name}<br /><span className="muted">{f.code} · {f.type} · {f.region}</span></td><td><span className="pill">{f.status}</span></td></tr>
+              ))}</tbody>
+            </table>
+          </div>
           <h3 style={{ marginTop: 12 }}>Module availability</h3>
-          <table>
-            <thead><tr><th>Facility</th><th>Module</th><th>State</th></tr></thead>
-            <tbody>{fm.filter((r) => visibleIds.includes(r.facilityId)).map((r, i) => (
-              <tr key={i}><td>{facLabel(r.facilityId)}</td><td>{modLabel(r.moduleId)}</td><td>{r.enabled ? <span className="pill ok">enabled</span> : <span className="pill deny">disabled</span>}</td></tr>
-            ))}</tbody>
-          </table>
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Facility</th><th>Module</th><th>State</th></tr></thead>
+              <tbody>{fm.filter((r) => visibleIds.includes(r.facilityId)).map((r, i) => (
+                <tr key={i}><td>{facLabel(r.facilityId)}</td><td>{modLabel(r.moduleId)}</td><td>{r.enabled ? <span className="pill ok">enabled</span> : <span className="pill deny">disabled</span>}</td></tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {canReview && (
         <div className="card" style={{ marginTop: 16 }}>
           <h3>UC-FMG-05 · Review module-change requests</h3>
-          <table>
-            <thead><tr><th>Request</th><th>Change</th><th>Status</th><th>Review</th></tr></thead>
-            <tbody>{mcr.map((r) => (
-              <tr key={r.id}>
-                <td><code>{r.id}</code></td>
-                <td>{facLabel(r.facilityId)} · {modLabel(r.moduleId)} → {r.desiredEnabled ? "enable" : "disable"}</td>
-                <td><span className="pill">{r.status}</span></td>
-                <td><div className="row">
-                  <button className="secondary" onClick={() => decide(r.id, "Approve")}>Approve</button>
-                  <button className="secondary" onClick={() => decide(r.id, "Reject")}>Reject</button>
-                </div></td>
-              </tr>
-            ))}</tbody>
-          </table>
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Request</th><th>Change</th><th>Status</th><th>Review</th></tr></thead>
+              <tbody>{mcr.map((r) => (
+                <tr key={r.id}>
+                  <td><code>{r.id}</code></td>
+                  <td>{facLabel(r.facilityId)} · {modLabel(r.moduleId)} → {r.desiredEnabled ? "enable" : "disable"}</td>
+                  <td><span className="pill">{r.status}</span></td>
+                  <td><div className="row">
+                    <button className="secondary" onClick={() => decide(r.id, "Approve")}>Approve</button>
+                    <button className="secondary" onClick={() => decide(r.id, "Reject")}>Reject</button>
+                  </div></td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
       )}
     </main>

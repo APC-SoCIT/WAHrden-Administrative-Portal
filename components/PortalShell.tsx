@@ -135,7 +135,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   )}
                 </div>
               )}
-              <span className="muted">{session.email}</span>
+              <span className="muted appbar-user">{session.email}</span>
             </div>
           </header>
           <div className="wrap">{children}</div>

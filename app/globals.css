@@ -98,12 +98,19 @@ h1, h2, h3 { color: var(--heading); }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   padding: 12px 22px;
   background: rgba(11, 14, 19, 0.85);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--border);
 }
 .appbar-title { font-weight: 600; color: var(--heading); font-size: 14px; }
+.appbar .appbar-user {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ---------- Layout: public topbar ---------- */
 .topbar {
@@ -169,8 +176,9 @@ h1, h2, h3 { color: var(--heading); }
 .pill.warn { background: var(--warnbg); color: var(--warn); border-color: transparent; }
 
 /* ---------- Tables ---------- */
+.table-wrap { width: 100%; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-th, td { text-align: left; padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th, td { text-align: left; padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; }
 th {
   background: var(--card-2);
   color: var(--muted);
@@ -281,6 +289,28 @@ pre.eval {
   background: var(--bg);
   margin: 6px 0;
 }
+
+/* ---------- Searchable select (combobox) ---------- */
+.searchselect { position: relative; }
+.searchselect input { margin: 4px 0 10px; }
+.searchselect-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 8px);
+  z-index: 30;
+  max-height: 230px;
+  overflow-y: auto;
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+}
+.searchselect-option { padding: 6px 9px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.searchselect-option.active { background: var(--card-2); }
+.searchselect-option.selected { color: var(--blue); font-weight: 600; }
+.searchselect-empty { padding: 6px 9px; }
 
 /* ---------- Alerts / notifications ---------- */
 .bell-wrap { position: relative; }

@@ -82,31 +82,33 @@ export default function SessionsPage() {
       <div className="card" style={{ marginTop: 16 }}>
         <h3>Active Sessions</h3>
         <p className="muted">All currently authenticated sessions across services.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>User</th><th>Service</th><th>Device</th><th>Location</th>
-              <th>IP</th><th>Started</th><th>Duration</th><th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {active.length === 0 && (
-              <tr><td colSpan={8} className="muted">No active sessions.</td></tr>
-            )}
-            {active.map((s) => (
-              <tr key={s.id}>
-                <td>{userName(s.userId)}<br /><span className="muted"><code>{s.id}</code></span></td>
-                <td>{s.service}</td>
-                <td>{s.device}</td>
-                <td>{s.location}</td>
-                <td><code>{s.ip}</code></td>
-                <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
-                <td>{duration(s.startedAt)}</td>
-                <td><button className="danger" onClick={() => terminate(s.id)}>Terminate</button></td>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th><th>Service</th><th>Device</th><th>Location</th>
+                <th>IP</th><th>Started</th><th>Duration</th><th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {active.length === 0 && (
+                <tr><td colSpan={8} className="muted">No active sessions.</td></tr>
+              )}
+              {active.map((s) => (
+                <tr key={s.id}>
+                  <td>{userName(s.userId)}<br /><span className="muted"><code>{s.id}</code></span></td>
+                  <td>{s.service}</td>
+                  <td>{s.device}</td>
+                  <td>{s.location}</td>
+                  <td><code>{s.ip}</code></td>
+                  <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
+                  <td>{duration(s.startedAt)}</td>
+                  <td><button className="danger" onClick={() => terminate(s.id)}>Terminate</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>
@@ -132,30 +134,32 @@ export default function SessionsPage() {
             Clear
           </button>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>User</th><th>Service</th><th>Device</th><th>Location</th>
-              <th>Started</th><th>Ended</th><th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            {historical.length === 0 && (
-              <tr><td colSpan={7} className="muted">No historical sessions match the filters.</td></tr>
-            )}
-            {historical.map((s) => (
-              <tr key={s.id}>
-                <td>{userName(s.userId)}<br /><span className="muted"><code>{s.id}</code></span></td>
-                <td>{s.service}</td>
-                <td>{s.device}</td>
-                <td>{s.location}</td>
-                <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
-                <td><span className="muted">{s.endedAt ? new Date(s.endedAt).toLocaleString() : "—"}</span></td>
-                <td>{duration(s.startedAt, s.endedAt)}</td>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th><th>Service</th><th>Device</th><th>Location</th>
+                <th>Started</th><th>Ended</th><th>Duration</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {historical.length === 0 && (
+                <tr><td colSpan={7} className="muted">No historical sessions match the filters.</td></tr>
+              )}
+              {historical.map((s) => (
+                <tr key={s.id}>
+                  <td>{userName(s.userId)}<br /><span className="muted"><code>{s.id}</code></span></td>
+                  <td>{s.service}</td>
+                  <td>{s.device}</td>
+                  <td>{s.location}</td>
+                  <td><span className="muted">{new Date(s.startedAt).toLocaleString()}</span></td>
+                  <td><span className="muted">{s.endedAt ? new Date(s.endedAt).toLocaleString() : "—"}</span></td>
+                  <td>{duration(s.startedAt, s.endedAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   );

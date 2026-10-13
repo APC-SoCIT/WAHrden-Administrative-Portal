@@ -85,16 +85,18 @@ export default function AuthzPage() {
                   : <span className="pill deny">Denied</span>}
                 {result.auditId && <span className="muted"> · audit {result.auditId}</span>}
               </p>
-              <table>
-                <thead><tr><th>Step</th><th>Result</th></tr></thead>
-                <tbody>{result.evaluations.map((ev, i) => (
-                  <tr key={i}>
-                    <td>{ev.step}</td>
-                    <td>{ev.ok ? <span className="pill ok">ok</span> : <span className="pill deny">no</span>}
-                      <br /><span className="muted">{ev.detail}</span></td>
-                  </tr>
-                ))}</tbody>
-              </table>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Step</th><th>Result</th></tr></thead>
+                  <tbody>{result.evaluations.map((ev, i) => (
+                    <tr key={i}>
+                      <td>{ev.step}</td>
+                      <td>{ev.ok ? <span className="pill ok">ok</span> : <span className="pill deny">no</span>}
+                        <br /><span className="muted">{ev.detail}</span></td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
             </>
           )}
         </div>

@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useActor } from "@/components/actor-context";
 import NotAuthorized from "@/components/NotAuthorized";
+import SearchSelect from "@/components/SearchSelect";
 import { api } from "@/lib/client";
 import { ALL_PERMISSIONS, PERMISSION_CATALOG } from "@/lib/permissions";
 
@@ -45,14 +46,12 @@ export default function AccessPage() {
   const [aUserQuery, setAUserQuery] = useState("");
   const [aFac, setAFac] = useState("");
   const [aRole, setARole] = useState("");
-  const [aRoleQuery, setARoleQuery] = useState("");
 
   // UC-AGA-03 — onboarding request
   const [oFac, setOFac] = useState("");
   const [oName, setOName] = useState("Dr. Paolo Aquino");
   const [oEmail, setOEmail] = useState("paolo.aquino@manilahc.example");
   const [oRole, setORole] = useState("");
-  const [oRoleQuery, setORoleQuery] = useState("");
   const [oModules, setOModules] = useState<string[]>([]);
   const [oReason, setOReason] = useState("");
 
@@ -115,13 +114,9 @@ export default function AccessPage() {
     () => users.filter((u) => `${u.displayName} ${u.email}`.toLowerCase().includes(aUserQuery.toLowerCase())),
     [users, aUserQuery]
   );
-  const filteredAssignRoles = useMemo(
-    () => roles.filter((r) => r.name.toLowerCase().includes(aRoleQuery.toLowerCase())),
-    [roles, aRoleQuery]
-  );
-  const filteredOnboardRoles = useMemo(
-    () => roles.filter((r) => r.name.toLowerCase().includes(oRoleQuery.toLowerCase())),
-    [roles, oRoleQuery]
+  const roleOptions = useMemo(
+    () => roles.map((r) => ({ value: r.id, label: r.name })),
+    [roles]
   );
 
   function togglePerm(perm: string) {
@@ -225,12 +220,14 @@ export default function AccessPage() {
           {canRoles && (
             <div className="card">
               <h3>UC-AGA-01 · Roles &amp; permissions</h3>
-              <table>
-                <thead><tr><th>Role</th><th>Permissions</th></tr></thead>
-                <tbody>{roles.map((r) => (
-                  <tr key={r.id}><td>{r.name}<br /><span className="muted">{r.id}</span></td><td><code>{r.permissions.join(", ")}</code></td></tr>
-                ))}</tbody>
-              </table>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Role</th><th>Permissions</th></tr></thead>
+                  <tbody>{roles.map((r) => (
+                    <tr key={r.id}><td>{r.name}<br /><span className="muted">{r.id}</span></td><td><code>{r.permissions.join(", ")}</code></td></tr>
+                  ))}</tbody>
+                </table>
+              </div>
               <form onSubmit={createRole} style={{ marginTop: 8 }}>
                 <label>New role name</label>
                 <input value={roleName} onChange={(e) => setRoleName(e.target.value)} placeholder="Dialysis Nurse" />
@@ -284,12 +281,13 @@ export default function AccessPage() {
                   <option value="">Select facility…</option>
                   {facilities.map((f) => <option key={f.id} value={f.id}>{f.name} ({f.code})</option>)}
                 </select>
-                <label>Search role</label>
-                <input value={aRoleQuery} onChange={(e) => setARoleQuery(e.target.value)} placeholder="Filter roles…" />
-                <select value={aRole} onChange={(e) => setARole(e.target.value)}>
-                  <option value="">Select role…</option>
-                  {filteredAssignRoles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-                </select>
+                <label>Role</label>
+                <SearchSelect
+                  options={roleOptions}
+                  value={aRole}
+                  onChange={setARole}
+                  placeholder="Search or pick a role…"
+                />
                 <button type="submit" disabled={aUsers.length === 0 || !aFac || !aRole}>
                   Assign access {aUsers.length > 1 ? `(bulk ${aUsers.length})` : ""}
                 </button>
@@ -312,12 +310,13 @@ export default function AccessPage() {
               <label>Prospective name / email</label>
               <input value={oName} onChange={(e) => setOName(e.target.value)} />
               <input value={oEmail} onChange={(e) => setOEmail(e.target.value)} />
-              <label>Search role</label>
-              <input value={oRoleQuery} onChange={(e) => setORoleQuery(e.target.value)} placeholder="Filter roles…" />
-              <select value={oRole} onChange={(e) => setORole(e.target.value)}>
-                <option value="">Select role…</option>
-                {filteredOnboardRoles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-              </select>
+              <label>Requested role</label>
+              <SearchSelect
+                options={roleOptions}
+                value={oRole}
+                onChange={setORole}
+                placeholder="Search or pick a role…"
+              />
               <label>Requested modules</label>
               <div className="pick-list">
                 {modules.map((m) => (
@@ -332,44 +331,46 @@ export default function AccessPage() {
               <button type="submit">Submit onboarding request</button>
             </form>
           )}
-          <table style={{ marginTop: 8 }}>
-            <thead>
-              <tr>
-                <th>Request</th><th>Facility</th><th>Requested role</th><th>Requested modules</th>
-                <th>Status</th>{canReviewOnboarding && <th>Review</th>}
-              </tr>
-            </thead>
-            <tbody>{myOnboarding.map((r) => (
-              <tr key={r.id}>
-                <td><code>{r.id}</code><br /><span className="muted">{String(r.prospectiveName)} · {String(r.prospectiveEmail)}</span>
-                  {!!r.reason && <div className="muted">Reason: {String(r.reason)}</div>}
-                  {!!r.reviewComment && <div className="muted">Review: {String(r.reviewComment)}</div>}
-                </td>
-                <td>{facLabel(r.facilityId)}</td>
-                <td>{roleLabel(r.requestedRoleId)}</td>
-                <td>
-                  {Array.isArray(r.requestedModuleIds) && r.requestedModuleIds.length
-                    ? <span className="muted">{(r.requestedModuleIds as string[]).map(moduleLabel).join(", ")}</span>
-                    : <span className="muted">—</span>}
-                </td>
-                <td><span className="pill">{r.status}</span></td>
-                {canReviewOnboarding && (
-                  <td>
-                    <input
-                      placeholder="Comment (required for Reject / Modify)"
-                      value={comments[r.id] ?? ""}
-                      onChange={(e) => setComments((c) => ({ ...c, [r.id]: e.target.value }))}
-                    />
-                    <div className="row" style={{ marginTop: 4 }}>
-                      <button className="secondary" onClick={() => decideObr(r.id, "Approve")}>Approve</button>
-                      <button className="secondary" onClick={() => decideObr(r.id, "ModifyAndApprove")}>Modify+Approve</button>
-                      <button className="secondary" onClick={() => decideObr(r.id, "Reject")}>Reject</button>
-                    </div>
+          <div className="table-wrap" style={{ marginTop: 8 }}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Request</th><th>Facility</th><th>Requested role</th><th>Requested modules</th>
+                  <th>Status</th>{canReviewOnboarding && <th>Review</th>}
+                </tr>
+              </thead>
+              <tbody>{myOnboarding.map((r) => (
+                <tr key={r.id}>
+                  <td><code>{r.id}</code><br /><span className="muted">{String(r.prospectiveName)} · {String(r.prospectiveEmail)}</span>
+                    {!!r.reason && <div className="muted">Reason: {String(r.reason)}</div>}
+                    {!!r.reviewComment && <div className="muted">Review: {String(r.reviewComment)}</div>}
                   </td>
-                )}
-              </tr>
-            ))}</tbody>
-          </table>
+                  <td>{facLabel(r.facilityId)}</td>
+                  <td>{roleLabel(r.requestedRoleId)}</td>
+                  <td>
+                    {Array.isArray(r.requestedModuleIds) && r.requestedModuleIds.length
+                      ? <span className="muted">{(r.requestedModuleIds as string[]).map(moduleLabel).join(", ")}</span>
+                      : <span className="muted">—</span>}
+                  </td>
+                  <td><span className="pill">{r.status}</span></td>
+                  {canReviewOnboarding && (
+                    <td style={{ minWidth: 260 }}>
+                      <input
+                        placeholder="Comment (required for Reject / Modify)"
+                        value={comments[r.id] ?? ""}
+                        onChange={(e) => setComments((c) => ({ ...c, [r.id]: e.target.value }))}
+                      />
+                      <div className="row" style={{ marginTop: 4 }}>
+                        <button className="secondary" onClick={() => decideObr(r.id, "Approve")}>Approve</button>
+                        <button className="secondary" onClick={() => decideObr(r.id, "ModifyAndApprove")}>Modify+Approve</button>
+                        <button className="secondary" onClick={() => decideObr(r.id, "Reject")}>Reject</button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -402,24 +403,26 @@ export default function AccessPage() {
               <button type="submit">Submit access-change request</button>
             </form>
           )}
-          <table style={{ marginTop: 8 }}>
-            <thead><tr><th>Request</th><th>Facility</th><th>Status</th>{canReviewChange && <th>Review</th>}</tr></thead>
-            <tbody>{myChange.map((r) => (
-              <tr key={r.id}>
-                <td><code>{r.id}</code><br /><span className="muted">{String(r.changeKind)} · user {String(r.targetUserId)}</span></td>
-                <td>{facLabel(r.facilityId)}</td>
-                <td><span className="pill">{r.status}</span></td>
-                {canReviewChange && (
-                  <td>
-                    <div className="row">
-                      <button className="secondary" onClick={() => decideAcr(r.id, "Approve")}>Approve</button>
-                      <button className="secondary" onClick={() => decideAcr(r.id, "Reject")}>Reject</button>
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))}</tbody>
-          </table>
+          <div className="table-wrap" style={{ marginTop: 8 }}>
+            <table>
+              <thead><tr><th>Request</th><th>Facility</th><th>Status</th>{canReviewChange && <th>Review</th>}</tr></thead>
+              <tbody>{myChange.map((r) => (
+                <tr key={r.id}>
+                  <td><code>{r.id}</code><br /><span className="muted">{String(r.changeKind)} · user {String(r.targetUserId)}</span></td>
+                  <td>{facLabel(r.facilityId)}</td>
+                  <td><span className="pill">{r.status}</span></td>
+                  {canReviewChange && (
+                    <td>
+                      <div className="row">
+                        <button className="secondary" onClick={() => decideAcr(r.id, "Approve")}>Approve</button>
+                        <button className="secondary" onClick={() => decideAcr(r.id, "Reject")}>Reject</button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
       )}
     </main>

@@ -125,16 +125,18 @@ export default function OversightPage() {
             <button className="secondary" onClick={load}>Filter</button>
             <button className="secondary" onClick={() => { setQ(""); setActor(""); setResult(""); setFacilityId(""); load(); }}>Clear</button>
           </div>
-          <table style={{ marginTop: 8 }}>
-            <thead><tr><th>When</th><th>Actor → action</th><th>Result</th></tr></thead>
-            <tbody>{events.slice(0, 60).map((e) => (
-              <tr key={e.id}>
-                <td><span className="muted">{new Date(e.at).toLocaleString()}</span></td>
-                <td><code>{e.actor}</code> · {e.action}<br /><span className="muted">{e.entity} · {e.detail}</span></td>
-                <td>{e.result === "Denied" || e.result === "failure" ? <span className="pill deny">{e.result}</span> : e.result === "Authorized" ? <span className="pill ok">Authorized</span> : <span className="pill">{e.result}</span>}</td>
-              </tr>
-            ))}</tbody>
-          </table>
+          <div className="table-wrap" style={{ marginTop: 8 }}>
+            <table>
+              <thead><tr><th>When</th><th>Actor → action</th><th>Result</th></tr></thead>
+              <tbody>{events.slice(0, 60).map((e) => (
+                <tr key={e.id}>
+                  <td><span className="muted">{new Date(e.at).toLocaleString()}</span></td>
+                  <td><code>{e.actor}</code> · {e.action}<br /><span className="muted">{e.entity} · {e.detail}</span></td>
+                  <td>{e.result === "Denied" || e.result === "failure" ? <span className="pill deny">{e.result}</span> : e.result === "Authorized" ? <span className="pill ok">Authorized</span> : <span className="pill">{e.result}</span>}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
         <div className="card">
           <h3>UC-OSO-02 · Generate operational report</h3>
