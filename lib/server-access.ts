@@ -7,7 +7,7 @@
 // without the required capability receives 403 — so the portal's per-actor
 // differences are enforced, not merely hidden in the UI.
 import { NextResponse } from "next/server";
-import { db } from "./db";
+import { db, notify } from "./db";
 import {
   can,
   canAny,
@@ -71,6 +71,13 @@ export function authorize(req: Request, required: Capability | Capability[]): Ga
   const caps = Array.isArray(required) ? required : [required];
   const allowed = caps.length === 1 ? can(base.actor.role, caps[0]) : canAny(base.actor.role, caps);
   if (!allowed) {
+    // Surface the denied attempt as an oversight alert (Module 5 weakness #6).
+    notify(
+      "UNAUTHORIZED_ACCESS",
+      base.actor.email,
+      `Authorization denied: ${base.actor.role} attempted unauthorized capability [${caps.join(" / ")}].`,
+      "critical"
+    );
     return {
       ok: false,
       res: NextResponse.json(

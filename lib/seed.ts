@@ -4,6 +4,7 @@ import type {
   Facility,
   FacilityModule,
   FunctionalModule,
+  Notification,
   OnboardingRequest,
   Role,
   Session,
@@ -24,9 +25,12 @@ export interface Seed {
   moduleChangeRequests: ModuleChangeRequest[];
   sessions: Session[];
   audit: AuditEvent[];
+  notifications: Notification[];
 }
 
 const now = new Date().toISOString();
+const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
+const hoursAgo = (h: number) => minutesAgo(h * 60);
 
 export function buildSeed(): Seed {
   return {
@@ -212,6 +216,7 @@ export function buildSeed(): Seed {
         prospectiveName: "Dr. Paolo Aquino",
         prospectiveEmail: "paolo.aquino@manilahc.example",
         requestedRoleId: "r-physician",
+        requestedModuleIds: ["m-consult", "m-eclaims"],
         reason: "New OPD physician for Manila HC.",
         status: "Pending",
         createdAt: now
@@ -247,15 +252,53 @@ export function buildSeed(): Seed {
         id: "s-1",
         userId: "u-doctor-1",
         service: "WAH4PC",
-        startedAt: now,
-        active: true
+        startedAt: hoursAgo(2),
+        active: true,
+        device: "Chrome 126 · macOS",
+        location: "Manila, PH",
+        ip: "203.0.113.24"
       },
       {
         id: "s-2",
         userId: "u-facility-1",
         service: "WAH4Hospital",
-        startedAt: now,
-        active: true
+        startedAt: minutesAgo(35),
+        active: true,
+        device: "Edge 126 · Windows 11",
+        location: "Manila, PH",
+        ip: "203.0.113.51"
+      },
+      {
+        id: "s-3",
+        userId: "u-doctor-1",
+        service: "WAH4Hospital",
+        startedAt: hoursAgo(9),
+        endedAt: hoursAgo(8),
+        active: false,
+        device: "Safari 17 · iPadOS",
+        location: "Quezon City, PH",
+        ip: "203.0.113.77"
+      },
+      {
+        id: "s-4",
+        userId: "u-nurse-1",
+        service: "WAH4PC",
+        startedAt: hoursAgo(30),
+        endedAt: hoursAgo(29),
+        active: false,
+        device: "Chrome 125 · Android 14",
+        location: "Cebu City, PH",
+        ip: "198.51.100.13"
+      },
+      {
+        id: "s-5",
+        userId: "u-service-1",
+        service: "OpenHIM",
+        startedAt: minutesAgo(12),
+        active: true,
+        device: "Service client · OpenHIM",
+        location: "Singapore, SG",
+        ip: "192.0.2.9"
       }
     ],
     audit: [
@@ -268,6 +311,26 @@ export function buildSeed(): Seed {
         entity: "dataset",
         result: "success",
         detail: "Prototype dataset initialised (Modules 1-5 demo scope)."
+      }
+    ],
+    notifications: [
+      {
+        id: "note-seed-1",
+        at: minutesAgo(18),
+        type: "FAILED_LOGIN",
+        severity: "warning",
+        subject: "ana.lim@manilahc.example",
+        detail: "3 failed sign-in attempts within 10 minutes from 203.0.113.24 (Manila, PH).",
+        count: 3
+      },
+      {
+        id: "note-seed-2",
+        at: hoursAgo(3),
+        type: "UNAUTHORIZED_ACCESS",
+        severity: "critical",
+        subject: "u-nurse-1",
+        detail: "Authorization denied: action 'billing.write' not granted at Cebu Community Hospital.",
+        count: 1
       }
     ]
   };

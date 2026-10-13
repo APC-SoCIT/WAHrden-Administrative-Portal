@@ -29,10 +29,10 @@ export default function Home() {
       <PublicHeader />
       <div className="wrap">
         <main>
-          <div className="card" style={{ background: "linear-gradient(135deg,#0e2a47,#14559f)", color: "#fff", border: "none" }}>
+          <div className="card hero">
             <span className="pill">Cloud-hosted prototype · Vercel-ready (Next.js)</span>
-            <h1 style={{ margin: "10px 0 6px" }}>WAHrden Administration Portal</h1>
-            <p style={{ color: "#cfe3ff", maxWidth: 820 }}>
+            <h1>WAHrden Administration Portal</h1>
+            <p>
               Centralized Identity, Access and Governance administration for the WAH
               ecosystem, aligned to the Version 9 use-case model. The portal is available
               only to the WAH Central Administrator, Facility Administrator and

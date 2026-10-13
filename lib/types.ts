@@ -5,7 +5,11 @@
 
 import type { PortalActorRole } from "./access";
 
-export type AccountStatus = "Active" | "Inactive" | "Retired";
+// Manual account status is a two-state control (UC-IAL-02): an account is
+// either Active or Deactivated. "Inactive" is the system-managed result of a
+// deactivation (and is set automatically), so the admin only sees Active /
+// Deactivate — there is no manual Inactive or Retired option.
+export type AccountStatus = "Active" | "Inactive";
 export type ActorRole = PortalActorRole;
 
 export interface User {
@@ -70,10 +74,15 @@ export interface OnboardingRequest {
   prospectiveName: string;
   prospectiveEmail: string;
   requestedRoleId: string;
+  // Functional modules access is being requested for, alongside the role.
+  requestedModuleIds?: string[];
   reason?: string;
   status: RequestStatus;
   decisionBy?: string;
   decidedAt?: string;
+  // Reviewer's comment — the visible reason for an approval, modification or
+  // rejection (required for Reject / Modify-and-Approve).
+  reviewComment?: string;
   createdAt: string;
 }
 
@@ -109,7 +118,12 @@ export interface Session {
   userId: string;
   service: "WAH4PC" | "WAH4Hospital" | "OpenHIM";
   startedAt: string;
+  endedAt?: string;
   active: boolean;
+  // Device / client context captured at authentication time.
+  device: string; // e.g. "Chrome 126 · macOS"
+  location: string; // e.g. "Manila, PH"
+  ip: string; // e.g. "203.0.113.24"
 }
 
 export interface AuditEvent {
@@ -122,6 +136,19 @@ export interface AuditEvent {
   entityId?: string;
   result: string;
   detail?: string;
+}
+
+export type NotificationType = "FAILED_LOGIN" | "UNAUTHORIZED_ACCESS" | "SUSPICIOUS_ACTIVITY";
+
+// Module 5 (UC-OSO-01) — surfaced alerts for repeated/suspicious activity.
+export interface Notification {
+  id: string;
+  at: string;
+  type: NotificationType;
+  severity: "warning" | "critical";
+  subject: string; // email / actor the alert concerns
+  detail: string;
+  count: number; // occurrences collapsed into this alert
 }
 
 // UC-AGA-07 authorization contract (POST /api/v1/authz/evaluate).

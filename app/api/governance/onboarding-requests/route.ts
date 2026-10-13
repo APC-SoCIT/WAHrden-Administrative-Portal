@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const gate = authorize(req, "UC-AGA-03");
   if (!gate.ok) return gate.res;
   const body = await req.json().catch(() => ({}));
-  const { facilityId, prospectiveName, prospectiveEmail, requestedRoleId, reason } = body;
+  const { facilityId, prospectiveName, prospectiveEmail, requestedRoleId, requestedModuleIds, reason } = body;
   const store = db();
   // The requester is always the authenticated actor — never trusted from the body.
   const admin = store.users.find((u) => u.id === gate.actor.id);
@@ -29,7 +29,9 @@ export async function POST(req: Request) {
   }
   const r = {
     id: nid("obr"), facilityId, requestedBy: gate.actor.id, prospectiveName, prospectiveEmail,
-    requestedRoleId, reason, status: "Pending" as RequestStatus, createdAt: new Date().toISOString()
+    requestedRoleId,
+    requestedModuleIds: Array.isArray(requestedModuleIds) ? requestedModuleIds : [],
+    reason, status: "Pending" as RequestStatus, createdAt: new Date().toISOString()
   };
   store.onboardingRequests.unshift(r);
   audit(gate.actor.email, gate.actor.role, "REQUEST_FACILITY_USER_ONBOARDING", "onboarding-request", "success", r.id, "UC-AGA-03: placed into Pending; no account created.");

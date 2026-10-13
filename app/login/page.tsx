@@ -2,23 +2,23 @@
 // Administration-portal sign-in gate.
 // Only WAH Central Administrator, Facility Administrator and Participating WAH
 // Service may enter; WAH Service User accounts are refused server-side.
+// Credentials are read from the local SQLite store — this page holds none.
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PublicHeader from "@/components/PublicHeader";
 import { api } from "@/lib/client";
 import { setSession, type PortalSession } from "@/lib/session";
 
-const DEMO = [
-  { label: "WAH Central Administrator", email: "maria.santos@wah.example" },
-  { label: "Facility Administrator", email: "jose.reyes@manilahc.example" },
-  { label: "Participating WAH Service", email: "service.wah4pc@services.wah.example" },
-  { label: "WAH Service User (denied)", email: "ana.lim@manilahc.example" }
+const ROLES = [
+  "WAH Central Administrator",
+  "Facility Administrator",
+  "Participating WAH Service"
 ];
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("maria.santos@wah.example");
-  const [password, setPassword] = useState("Wahrden!2026");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -72,41 +72,34 @@ export default function LoginPage() {
                 <strong style={{ color: "var(--deny)" }}>{err}</strong>
               </div>
             )}
+            <p className="muted" style={{ marginTop: 12 }}>
+              After signing in you can launch the WAH4C service application:{" "}
+              <a className="link" href="https://wah4c.vercel.app" target="_blank" rel="noreferrer">
+                Launch WAH4C ↗
+              </a>
+            </p>
           </div>
           <div className="card">
-            <span className="pill">Demo accounts</span>
-            <h2>Prototype credentials</h2>
+            <span className="pill">Prototype · presentation</span>
+            <h2>Accounts</h2>
             <p className="muted">
-              All demo accounts share the password <code>Wahrden!2026</code>. Each actor
-              sees a different portal; the WAH Service User is not permitted here.
+              Demo accounts and their passwords are stored in the local SQLite database
+              (<code>data/wahrden.sqlite</code>) and provided to the presenter separately.
+              No credentials live in this codebase.
             </p>
             <table>
               <thead>
-                <tr><th>Actor</th><th>Email</th></tr>
+                <tr><th>Portal actor</th></tr>
               </thead>
               <tbody>
-                {DEMO.map((d) => (
-                  <tr key={d.email}>
-                    <td>{d.label}</td>
-                    <td>
-                      <button
-                        className="secondary"
-                        style={{ padding: "4px 8px" }}
-                        onClick={() => {
-                          setEmail(d.email);
-                          setPassword("Wahrden!2026");
-                        }}
-                      >
-                        <code>{d.email}</code>
-                      </button>
-                    </td>
-                  </tr>
+                {ROLES.map((r) => (
+                  <tr key={r}><td>{r}</td></tr>
                 ))}
               </tbody>
             </table>
             <div className="notice rule">
-              WAH Service User is intentionally excluded from this portal (V9). Accounts
-              such as <code>ana.lim@manilahc.example</code> are refused at sign-in.
+              WAH Service User is intentionally excluded from this portal (V9): those
+              accounts are refused at sign-in.
             </div>
           </div>
         </main>

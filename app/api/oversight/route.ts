@@ -10,6 +10,8 @@ export async function GET(req: Request) {
   const q = (searchParams.get("q") ?? "").toLowerCase();
   const action = searchParams.get("action") ?? "";
   const result = searchParams.get("result") ?? "";
+  const actor = (searchParams.get("actor") ?? "").toLowerCase();
+  const facilityId = searchParams.get("facilityId") ?? "";
   const store = db();
   let events = store.audit;
   if (q) {
@@ -17,8 +19,12 @@ export async function GET(req: Request) {
       [e.actor, e.action, e.entity, e.detail ?? "", e.entityId ?? ""].join(" ").toLowerCase().includes(q)
     );
   }
+  if (actor) events = events.filter((e) => e.actor.toLowerCase().includes(actor));
+  if (facilityId) events = events.filter((e) => (e.detail ?? "").includes(facilityId) || (e.entityId ?? "").includes(facilityId));
   if (action) events = events.filter((e) => e.action === action);
-  if (result) events = events.filter((e) => e.result === result);
+  if (result === "success") events = events.filter((e) => e.result === "success" || e.result === "Authorized");
+  else if (result === "failed") events = events.filter((e) => e.result === "failure" || e.result === "Denied");
+  else if (result) events = events.filter((e) => e.result === result);
   return NextResponse.json({ events, total: events.length });
 }
 

@@ -6,11 +6,13 @@ export default function PublicHeader() {
   return (
     <div className="topbar">
       <div className="brand">
-        WAHrden Admin Portal <small>Identity &amp; Access Governance · prototype</small>
+        WAHrden <small>Admin Portal · Identity &amp; Access Governance</small>
       </div>
-      <Link href="/">Home</Link>
-      <Link href="/login">Sign in</Link>
-      <Link href="/architecture">Architecture</Link>
+      <nav className="topbar-nav">
+        <Link href="/">Home</Link>
+        <Link href="/login">Sign in</Link>
+        <Link href="/architecture">Architecture</Link>
+      </nav>
     </div>
   );
 }

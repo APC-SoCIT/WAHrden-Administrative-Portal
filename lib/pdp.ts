@@ -51,7 +51,7 @@ export function evaluateAuthz(store: Seed, req: AuthzRequest): AuthzDecision {
   });
 
   // Account eligibility gates authentication-derived authorization:
-  // Inactive/Retired accounts cannot be Authorized (UC-IAL-02 + UC-ASS-03 EF-03).
+  // Deactivated (Inactive) accounts cannot be Authorized (UC-IAL-02 + UC-ASS-03 EF-03).
   if (user.status !== "Active") {
     evaluations.push({
       step: "2.1b account eligibility",

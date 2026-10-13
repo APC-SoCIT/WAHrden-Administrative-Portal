@@ -2,7 +2,7 @@
 // Vercel-safe: module-global with globalThis pinning so dev HMR keeps state;
 // serverless instances each get their own copy (documented demo limitation).
 import { buildSeed, type Seed } from "./seed";
-import type { AuditEvent } from "./types";
+import type { AuditEvent, Notification, NotificationType } from "./types";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -48,4 +48,37 @@ export function audit(
   };
   store.audit.unshift(ev);
   return ev;
+}
+
+// Surface a repeated/suspicious-activity alert (Module 5). Consecutive alerts
+// of the same type for the same subject are collapsed into one with a count,
+// so repeated failed logins/denials show as a single escalating notification.
+export function notify(
+  type: NotificationType,
+  subject: string,
+  detail: string,
+  severity: Notification["severity"] = "warning"
+): Notification {
+  const store = db();
+  const existing = store.notifications.find(
+    (n) => n.type === type && n.subject === subject
+  );
+  if (existing) {
+    existing.count += 1;
+    existing.at = new Date().toISOString();
+    existing.detail = detail;
+    if (severity === "critical") existing.severity = "critical";
+    return existing;
+  }
+  const note: Notification = {
+    id: nid("note"),
+    at: new Date().toISOString(),
+    type,
+    severity,
+    subject,
+    detail,
+    count: 1
+  };
+  store.notifications.unshift(note);
+  return note;
 }

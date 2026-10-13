@@ -18,6 +18,7 @@ export async function DELETE(req: Request) {
   if (!s) return NextResponse.json({ error: "Active session unavailable (EF-02)." }, { status: 404 });
   if (!s.active) return NextResponse.json({ error: "Session is no longer active (EF-02).", session: s }, { status: 409 });
   s.active = false;
+  s.endedAt = new Date().toISOString();
   audit(gate.actor.email, gate.actor.role, "TERMINATE_ACTIVE_SESSION", "session", "success", s.id, "UC-ASS-04: session deliberately terminated.");
   return NextResponse.json({ session: s });
 }
